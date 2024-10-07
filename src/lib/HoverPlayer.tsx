@@ -57,6 +57,7 @@ export default function HoverPlayer() {
 
   return (
     <PlayButton
+     id="hover-player"
       style={{
         position: 'fixed',
         left: `${boundingRect.left - 50}px`, // Position left of paragraph
