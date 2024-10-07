@@ -50,7 +50,6 @@ export default function HoverPlayer() {
         cursor: 'pointer',
         background: '#4A90E2', // Blue background
         borderRadius: '50%', // Circular button
-        zIndex: 10000, // High z-index to stay on top of other content
         padding: '8px',
         boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)', // Soft shadow
       }}
