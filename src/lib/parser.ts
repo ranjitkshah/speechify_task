@@ -44,4 +44,41 @@ const IGNORE_LIST = [
  *            </body>;
  *            In this case, #content-1 should not be considered as a top level readable element.
  */
-export function getTopLevelReadableElementsOnPage(): HTMLElement[] {}
+
+function hasNonEmptyTextContent(element: Element): any {
+  const textContent = element.textContent?.trim();
+  return textContent && textContent.length > 0;
+}
+
+function isInIgnoreList(element: Element): any{
+  return IGNORE_LIST.includes(element.tagName.toUpperCase());
+}
+
+function isSingleChildElement(element: Element): any {
+  return element.parentElement?.children.length === 1;
+}
+
+function containsAnotherTopLevelElement(element: Element, readableElements: Element[]): any {
+  return readableElements.some(readableElement => element !== readableElement && element.contains(readableElement));
+}
+
+export function getTopLevelReadableElementsOnPage(): any {
+   
+    const body = document.body;
+    const allElements = Array.from(body.getElementsByTagName("*"))
+
+    const readableElements: Element[] = [];
+    for (const element of allElements) {
+      if(!isInIgnoreList(element)&&hasNonEmptyTextContent(element)&&!isSingleChildElement(element)) {
+           readableElements.push(element);
+      }
+    }
+
+    const topLevelReadableElements = readableElements.filter(e=> {
+      return !containsAnotherTopLevelElement(e, readableElements);
+    })
+
+    return topLevelReadableElements;
+
+
+}

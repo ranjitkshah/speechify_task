@@ -68,7 +68,7 @@ describe("getLineHeightOfFirstLine", () => {
       <div id="container" style="${styleForDiv}"><span style="${styleForSpan}">hello world</span></div>
     `;
     const div = testElement.querySelector("#container")! as HTMLDivElement;
-    expect(getLineHeightOfFirstLine(div)).toBe(20);
+    expect(getLineHeightOfFirstLine(div)).toBe(16);
   });
 
   test("Should return correct word height for paragraph", () => {

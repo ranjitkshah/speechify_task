@@ -1,3 +1,5 @@
+import {useState, useEffect} from 'react';
+
 /**
  * Gets bounding boxes for an element. This is implemented for you
  */
@@ -22,13 +24,32 @@ export function getElementBounds(elem: HTMLElement) {
 export function isPointInsideElement(
   coordinate: { x: number; y: number },
   element: HTMLElement
-): boolean {}
+): boolean {
+
+  const bounds = element.getBoundingClientRect();
+  return (
+    coordinate.x >= bounds.left &&
+    coordinate.x <= bounds.right &&
+    coordinate.y >= bounds.top &&
+    coordinate.y <= bounds.bottom
+  )
+}
 
 /**
  * **TBD:** Implement a function that returns the height of the first line of text in an element
  * We will later use this to size the HTML element that contains the hover player
  */
-export function getLineHeightOfFirstLine(element: HTMLElement): number {}
+export function getLineHeightOfFirstLine(element: HTMLElement): number {
+   const computedStyle = window.getComputedStyle(element);
+   const lineHeight = computedStyle.lineHeight;
+   if(lineHeight === 'normal') {
+    const fontSize = parseFloat(computedStyle.fontSize);
+    return fontSize*1.2;
+   } else {
+    return parseFloat(lineHeight);
+   }
+
+}
 
 export type HoveredElementInfo = {
   element: HTMLElement;
@@ -45,4 +66,37 @@ export type HoveredElementInfo = {
  */
 export function useHoveredParagraphCoordinate(
   parsedElements: HTMLElement[]
-): HoveredElementInfo | null {}
+): HoveredElementInfo | null {
+    const [hoveredElementInfo, setHoveredElementInfo] = useState<HoveredElementInfo |null>(null);
+
+    useEffect(()=> {
+      function handleMouseMove(event: MouseEvent) {
+        const {clientX, clientY} =event;
+        for(const element of parsedElements) {
+          const bounds = getElementBounds(element);
+          if(isPointInsideElement({x:clientX, y:clientY}, element)) {
+            const heightOfFirstLine= getLineHeightOfFirstLine(element);
+            setHoveredElementInfo({
+              element,
+              top: bounds.top,
+              left: bounds.left,
+              heightOfFirstLine,
+            });
+            return;
+
+          }
+
+          setHoveredElementInfo(null);
+        }
+
+      };
+
+        window.addEventListener('mousemove', handleMouseMove)
+        return () => {
+          window.addEventListener('mousemove', handleMouseMove)
+        }
+    }, [parsedElements]);
+
+    return hoveredElementInfo;
+
+}
